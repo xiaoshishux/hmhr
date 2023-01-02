@@ -64,13 +64,13 @@
         <span> 密码: 123456</span>
       </div>
     </el-form>
-    <el-button @click="testFn">测试</el-button>
   </div>
 </template>
 
 <script>
 import { validMobile } from "@/utils/validate";
-import { loginAPI, getUserProfileAPI } from "@/api";
+
+import { mapActions } from "vuex";
 
 export default {
   name: "Login",
@@ -115,10 +115,7 @@ export default {
     },
   },
   methods: {
-    async testFn() {
-      const res = await getUserProfileAPI();
-      console.log(res);
-    },
+    ...mapActions("user", ["loginActions"]),
     showPwd() {
       if (this.passwordType === "password") {
         this.passwordType = "";
@@ -136,9 +133,8 @@ export default {
         if (valid) {
           this.loading = true;
           try {
-            const res = await loginAPI(this.loginForm);
+            const res = await this.loginActions(this.loginForm);
             this.$message.success(res.message);
-            this.$store.commit("user/SET_TOKEN", res.data);
             console.log(res);
           } catch (err) {
             console.error(err);
@@ -174,6 +170,7 @@ $cursor: #68b0fe; // 将输入框光标改成蓝色
 .login-container {
   background-image: url("~@/assets/common/login.jpg");
   background-position: center;
+
   .el-input {
     display: inline-block;
     height: 47px;
@@ -204,6 +201,7 @@ $cursor: #68b0fe; // 将输入框光标改成蓝色
     color: #454545;
   }
 }
+
 .el-form-item__error {
   font-size: 14px;
 }
@@ -228,12 +226,14 @@ $light_gray: #eee;
     margin: 0 auto;
     overflow: hidden;
   }
+
   .login_btn {
     background: #407ffe;
     height: 64px;
     line-height: 32px;
     font-size: 24px;
   }
+
   .tips {
     font-size: 14px;
     color: #fff;
