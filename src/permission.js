@@ -6,7 +6,7 @@ import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 
 // 白名单数组
-const whiteList = ['/login'] // no redirect whitelist
+const whiteList = ['/login','/404'] // no redirect whitelist
 
 // 前置路由守卫
 router.beforeEach(async(to, from, next) => {
@@ -20,6 +20,9 @@ router.beforeEach(async(to, from, next) => {
     }else{
        // 如果存在 token，访问的是其他页面，直接放行
       next()
+      if(!store.getters.name){
+        store.dispatch('user/getUserInfoActions')
+      }
     }
   }else{
     // 如果不存在 token，访问的是白名单内容，直接放行

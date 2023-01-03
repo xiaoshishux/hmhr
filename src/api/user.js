@@ -8,9 +8,9 @@ export function loginAPI(data) {
     })
 }
 
-export function getUserProfileAPI() {
+export function getUserProfile() {
     return request({
-        url: '/sys/profile',
-        method: 'post'
+      url: '/sys/profile',
+      method: 'post'
     })
-}
+  }

@@ -1,9 +1,10 @@
 import { getToken, setToken, removeToken } from "@/utils/auth";
-import { loginAPI } from "@/api";
+import { loginAPI,getUserProfile} from "@/api";
 // 共享的数据
 const getDefaultState = () => {
   return {
     token: getToken(), // 用户 Token，默认为 ''
+    userInfo:{},// 用户信息对象
   };
 };
 const state = getDefaultState();
@@ -23,7 +24,15 @@ const mutations = {
     state.token = "";
     removeToken();
   },
-};
+  // 设置用户名
+  SET_USER(state, value) {
+    state.userInfo = value
+  },
+  // 删除用户信息
+  REMOVE_USER(state) {
+    state.userInfo = {}
+  }
+}
 
 const actions = {
   // 登录逻辑-封装
@@ -39,6 +48,11 @@ const actions = {
       return Promise.reject(err);
     }
   },
+  // 获取-用户信息
+  async getUserInfoActions({ commit }) {
+    const { data: userObj } = await getUserProfile() // 获取用户基本资料对象
+    commit('SET_USER', userObj) // 保存到vuex的userInfo对象里
+  }
 };
 
 export default {
