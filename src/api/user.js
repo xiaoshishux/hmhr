@@ -7,10 +7,16 @@ export function loginAPI(data) {
         data
     })
 }
-
-export function getUserProfile() {
-    return request({
-      url: '/sys/profile',
-      method: 'post'
-    })
-  }
+// 获取用户信息
+export function getUserProfileAPI() {
+  return request({
+    url: '/sys/profile',
+    method: 'post'
+  })
+}
+//获取用户头像
+export function getUserPhotoAPI(id){
+  return request({
+    url:`/sys/user/${id}`
+  })
+}

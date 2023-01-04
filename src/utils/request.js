@@ -38,7 +38,7 @@ service.interceptors.response.use(
     // if (error.response && error.response.data && error.response.data.code === 10002) {
     //   store.commit('user/REMOVE_TOKEN')
     //   store.commit('user/RESET_STATE')
-    //   router.replace('/login')
+    //   router.replace(`/login?redirect=${encodeURIComponent(router.currentRoute.fullPath)}`)
     // }
     return Promise.reject(error)
   }

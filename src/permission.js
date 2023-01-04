@@ -5,11 +5,13 @@ import NProgress from 'nprogress'
 // 导入进度条样式
 import 'nprogress/nprogress.css'
 
+import getPageTitle from '@/utils/get-page-title'
 // 白名单数组
 const whiteList = ['/login','/404'] // no redirect whitelist
 
 // 前置路由守卫
 router.beforeEach(async(to, from, next) => {
+  
   NProgress.start()
   const token = store.getters.token
   if(token){
@@ -20,9 +22,7 @@ router.beforeEach(async(to, from, next) => {
     }else{
        // 如果存在 token，访问的是其他页面，直接放行
       next()
-      if(!store.getters.name){
-        store.dispatch('user/getUserInfoActions')
-      }
+      if (!store.getters.name) { store.dispatch('user/getUserInfoActions') }
     }
   }else{
     // 如果不存在 token，访问的是白名单内容，直接放行
@@ -31,6 +31,7 @@ router.beforeEach(async(to, from, next) => {
     }else{
       // 没有 token，且不是白名单页面，跳转到登录页面
       next('/login')
+      
       NProgress.done()
     }
   }
@@ -38,6 +39,7 @@ router.beforeEach(async(to, from, next) => {
 })
 // 后置路由守卫
 router.afterEach(() => {
+  document.title = getPageTitle(to.meta.title)
   // 隐藏进度条效果
   NProgress.done()
 })

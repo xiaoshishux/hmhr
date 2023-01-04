@@ -135,8 +135,8 @@ export default {
           try {
             const res = await this.loginActions(this.loginForm);
             this.$message.success(res.message);
-            this.$router.replace("/")
-            console.log(res);
+            this.$router.replace(this.redirect || "/")
+            // console.log(res);
           } catch (err) {
             console.error(err);
           }

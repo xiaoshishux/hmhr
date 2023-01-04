@@ -56,6 +56,23 @@ export default {
       this.$store.dispatch('app/toggleSideBar')
     },
     async logout() {
+      this.$confirm('你确定要离开吗？，是否继续','提示',{
+        confirmButtonText:"确定",
+        cancelButtonText:"取消",
+        type:'warning'
+      }).then(async()=>{
+                // 使用 dispath 调用退出登录的方法
+        // 其实action无论有么有async, 返回的都是一个Promise对象(vuex内部设置)
+        // await等待退出流程代码走完
+        await this.$store.dispatch('user/logOutActions')
+        // 跳转到登录页面
+        this.$router.replace(`/login?redirect=${encodeURIComponent(this.$route.fullPath)}`)
+// 退出成功后的提示
+        this.$message.success("退出成功")
+      }).catch(()=>{
+        // 取消退出提示
+        this.$message.info("已取消退出")
+      })
       await this.$store.dispatch('user/logout')
       this.$router.push(`/login?redirect=${this.$route.fullPath}`)
     }

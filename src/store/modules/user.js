@@ -1,5 +1,5 @@
 import { getToken, setToken, removeToken } from "@/utils/auth";
-import { loginAPI,getUserProfile} from "@/api";
+import { loginAPI,getUserProfileAPI,getUserPhotoAPI} from "@/api";
 // 共享的数据
 const getDefaultState = () => {
   return {
@@ -50,8 +50,15 @@ const actions = {
   },
   // 获取-用户信息
   async getUserInfoActions({ commit }) {
-    const { data: userObj } = await getUserProfile() // 获取用户基本资料对象
-    commit('SET_USER', userObj) // 保存到vuex的userInfo对象里
+    const { data: userObj } = await getUserProfileAPI() // 获取用户基本资料对象
+    const {data:photoObj}=await getUserPhotoAPI(userObj.userId) // 获取用户头像
+    const newObj = {...userObj,...photoObj} // 合并一个信息非常全的对象
+    commit('SET_USER', newObj) // 保存到vuex的userInfo对象里
+  },
+  // 退出登录
+  async logOutActions({commit}){
+    commit("REMOVE_TOKEN")
+    commit("RESET_STATE")
   }
 };
 

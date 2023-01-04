@@ -31,6 +31,7 @@ export default {
       'sidebar'
     ]),
     routes() {
+       // this.$router.options.routes可以拿到路由配置时，设置的路由表数据
       return this.$router.options.routes
     },
     activeMenu() {
