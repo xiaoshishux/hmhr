@@ -1,5 +1,7 @@
 import request from '@/utils/request'
 
+
+// 登录信息验证
 export function loginAPI(data) {
     return request({
         url: '/sys/login',
