@@ -38,7 +38,7 @@ router.beforeEach(async(to, from, next) => {
   next()
 })
 // 后置路由守卫
-router.afterEach(() => {
+router.afterEach((to, from) => {
   document.title = getPageTitle(to.meta.title)
   // 隐藏进度条效果
   NProgress.done()

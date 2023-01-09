@@ -2,7 +2,7 @@ import axios from 'axios'
 import { Message } from 'element-ui'
 import store from '@/store'
 import router from '@/router'
-import { removeToken } from './auth'
+// import { removeToken } from './auth'
 
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API,
@@ -13,7 +13,7 @@ service.interceptors.request.use(
   config => {
     const token = store.getters.token
     if (token) {
-      config.headers.Authorization = `Bearer${token}`
+      config.headers.Authorization = `Bearer ${token}`
     }
     return config
   },
@@ -35,11 +35,11 @@ service.interceptors.response.use(
   },
   error => { // http状态码4xx
     Message.error(error.response.data.message)
-    // if (error.response && error.response.data && error.response.data.code === 10002) {
-    //   store.commit('user/REMOVE_TOKEN')
-    //   store.commit('user/RESET_STATE')
-    //   router.replace(`/login?redirect=${encodeURIComponent(router.currentRoute.fullPath)}`)
-    // }
+    if (error.response && error.response.data && error.response.data.code === 10002) {
+      store.commit('user/REMOVE_TOKEN')
+      store.commit('user/RESET_STATE')
+      router.replace(`/login?redirect=${encodeURIComponent(router.currentRoute.fullPath)}`)
+    }
     return Promise.reject(error)
   }
 )
