@@ -31,7 +31,9 @@
                         /></span>
                         <!-- 下拉项 -->
                         <el-dropdown-menu slot="dropdown">
-                          <el-dropdown-item @click.native="add()">添加子部门</el-dropdown-item>
+                          <el-dropdown-item @click.native="add()"
+                            >添加子部门</el-dropdown-item
+                          >
                         </el-dropdown-menu>
                       </el-dropdown>
                     </el-col>
@@ -73,7 +75,9 @@
                             <el-dropdown-item @click.native="edit(data)"
                               >编辑部门</el-dropdown-item
                             >
-                            <el-dropdown-item v-if="data&& !data.children" @click.native="del(data)"
+                            <el-dropdown-item
+                              v-if="data && !data.children"
+                              @click.native="del(data)"
                               >删除部门</el-dropdown-item
                             >
                           </el-dropdown-menu>
@@ -89,8 +93,12 @@
       </el-card>
     </div>
     <departDialog
+      ref="departDialog"
       :dialog-visible.sync="showDepartDialog"
+      :origin-list="originList"
       :employees-list="employeesList"
+      :is-edit="isEdit"
+      :parent-id="clickDepartId"
       @addDepartEV="addDepartmentsFn"
     />
   </div>
@@ -119,6 +127,8 @@ export default {
       showDepartDialog: false,
       employeesList: [], // 员工列表
       clickDepartId: "", // 部门的 id
+      isEdit:fales, // 编辑状态（false未编辑）
+      originList: [], // 用于弹窗内-校验部门code和name是否重复数据数组
       // 树形控件数据
       treeData: [
         {
@@ -199,6 +209,13 @@ export default {
     // 获取部门列表方法
     async getDepartMentsListFn() {
       const res = await departmentsListAPI();
+      // 格式化需要传递给子组件的数据
+      this.originList = res.data.depts.map((item) => ({
+        id: item.id,
+        code: item.code,
+        name: item.name,
+        pid: item.pid,
+      }));
       // console.log(res);
       this.treeData = transTree(res.data.depts, ""); // 因为后台返回的字段是id和pid而且根是空字符串, 如果不是需要自己改变transTree里判断条件等
     },
@@ -207,18 +224,21 @@ export default {
     },
     // 正文部分-右侧的添加子部门
     add(data) {
-      this.isEdit = false
-      if(data) { // 添加二级以下部门
+      this.isEdit = false;
+      if (data) {
+        // 添加二级以下部门
         this.clickDepartId = data.id; // 保存当前部门id
-      }else{ // 添加一级部门(当前点击公司id为'')
-        this.clickDepartId= ''
+      } else {
+        // 添加一级部门(当前点击公司id为'')
+        this.clickDepartId = "";
         // 我们可以看到一级部门的pid都是''
       }
-      
+
       this.showDepartDialog = true; // 弹窗显示
     },
     // 右侧-编辑子部门
     async edit(data) {
+      this.isEdit = true
       this.clickDepartId = data.id; // 编辑的部门 ID
       this.showDepartDialog = true; // 弹窗显示
       const res = await getDepartDetailAPI(data.id);
@@ -242,8 +262,7 @@ export default {
       // 调用删除接口
       const delDeparRes = await delDepartmentAPI(data.id);
       // 根据状态值，查看是否删除成功
-      if (!delDeparRes.success)
-        return this.$message.error(delDeparRes.message);
+      if (!delDeparRes.success) return this.$message.error(delDeparRes.message);
       // 删除成功需要给用户进行提示
       this.$message.success(delDeparRes.message);
       // 删除后需要重新获取当前页面数据

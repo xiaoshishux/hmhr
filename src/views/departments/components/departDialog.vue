@@ -70,8 +70,56 @@ export default {
         return []; // 独立作用域
       },
     },
+    // 用于检验的code和name对象的数组
+    originList: {
+      type: Array,
+      default() {
+        return [];
+      },
+      required: true,
+      // 编辑状态
+      isEdit: {
+        type: Boolean,
+        default: false,
+      },
+      // 单击的部门id
+      parentId: {
+        type: String,
+        default: "",
+      },
+    },
   },
   data() {
+    // 校验部门编码是否重复
+    const validCode = (rule, value, callback) => {
+    // 判断是否能否找到对应的部门，如果找到了则返回该对象
+      let existCodeList = this.originList.map(item => item.code)
+      // 如果是编辑状态，则将需要编辑的这一项排除在外
+      if (this.isEdit) {
+        existCodeList = this.originList.filter(item => item.id !== this.parentId).map(item => item.code)
+      }
+      // 如果存在该对象，则说明编码已经存在，抛出错误
+      existCodeList.includes(value) ? callback(new Error('编码' + value + '已经存在')) : callback()
+    }
+    // 同级部门禁止出现重复部门
+    const validName = (rule, value, callback) => {
+    // 查找同级的分类
+    // 先筛选属于这个pid下属的(parentId就是id)部门对象, 然后映射name名字数组
+      let existNameList = this.originList.filter(item => item.pid === this.parentId).map(item => item.name)
+      // 如果是编辑的情况
+      if (this.isEdit) {
+        // 找到部门的当前对象
+        const dept = this.originList.find(item => item.id === this.parentId)
+        // 取出父级的 id (当前对象的pid)
+        const pid = dept.pid
+        // 过滤，筛选出同一级别的数据, 但是id不包含当前编辑部门的id, 映射返回name名字数组
+        existNameList = this.originList
+          .filter(item => item.pid === pid && item.id !== this.parentId)
+          .map(item => item.name)
+      }
+      // 判断最新输入的部门名称是否存在
+      existNameList.includes(value) ? callback(new Error('这个部门下这个名字' + value + '已经被占用了')) : callback()
+    }
     return {
       form: {
         name: "", // 部门名称
@@ -79,6 +127,7 @@ export default {
         manager: "", // 部门管理者
         introduce: "", // 部门介绍
       },
+
       rules: {
         name: [
           { required: true, message: "部门名称不能为空", trigger: "blur" },
@@ -97,6 +146,7 @@ export default {
             message: "部门编码要求1-50个字符",
             trigger: "blur",
           },
+          { validator: validCode, trigger: "blur" },
         ],
         manager: [
           { required: true, message: "部门负责人不能为空", trigger: "blur" },
@@ -142,5 +192,4 @@ export default {
 };
 </script>
 
-<style scoped lang="less">
-</style>
+<style scoped lang="less"></style>
