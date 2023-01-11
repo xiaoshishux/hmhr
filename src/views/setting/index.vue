@@ -16,11 +16,11 @@
               >新增角色</el-button>
             </el-row>
             <!-- 使用 Table 组件实现用户角色的渲染 -->
-            <el-table border style="width: 100%">
+            <el-table :data="rolesList" border style="width: 100%">
               <el-table-column type="index" label="序号" width="120" />
-              <el-table-column label="角色名" width="240" />
-              <el-table-column label="描述" />
-              <el-table-column label="操作">
+              <el-table-column  prop="name" label="角色名" width="240" />
+              <el-table-column  prop="description" label="描述" />
+              <el-table-column  label="操作">
                 <template slot-scope="scope">
                   <el-button size="small" type="success" @click="setRoles(scope.row)">分配权限</el-button>
                   <el-button size="small" type="primary" @click="editRoles(scope.row)">编辑</el-button>
@@ -71,6 +71,7 @@
 </template>
 
 <script>
+import {getRolesAPI} from '@/api'
 export default {
   data() {
     return {
@@ -83,7 +84,20 @@ export default {
       total: 0 // 角色数据总条数
     }
   },
+  created(){
+    this.getRolesList()
+  },
   methods: {
+    // 调用获取角色列表的方法
+   async getRolesList(){
+    // 发起请求
+      const res = await  getRolesAPI(this.query)
+      // 根据返回的状态码进行业务处理
+      if(!res.success) return this.$message.error(res.messagge)
+      // 将返回的数据进行赋值
+      this.rolesList = res.data.rows
+      this.total = res.data.total
+    },
     // 每页显示的条数发生改变时触发
     handleSizeChange() {},
 
