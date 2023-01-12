@@ -15,13 +15,13 @@ import socialRouter from './modules/social'
 
 // 动态路由表，项目中不同的用户可以访问不同的功能
 export const asyncRoutes = [
-  approvalsRouter,
   departmentsRouter,
+  settingRouter,
+  approvalsRouter,
   employeesRouter,
   permissionRouter,
   attendancesRouter,
   salarysRouter,
-  settingRouter,
   socialRouter
 ]
 // 静态路由表，项目中每个用户都可以访问的功能
@@ -55,7 +55,7 @@ const createRouter = () => new Router({
   // 控制路由滚动行为  滚动到顶部
   scrollBehavior: () => ({ y: 0 }),
   // 组合到一起组成路由表
-  routes: [...constantRoutes,...asyncRoutes]
+  routes: [...constantRoutes, ...asyncRoutes]
 })
 
 const router = createRouter()
