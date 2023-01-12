@@ -17,3 +17,18 @@ export function getCompanyInfoAPI(companyId) {
       url: `/company/${companyId}`
     })
   }
+
+//   新增角色
+export function addRoleAPI(data){
+    return request({
+        url:'/sys/role',
+        method:'post',
+        data
+    })
+}
+// 获取某个角色的列表
+export function getRoleIdAPI(id) {
+    return request({
+      url: `/sys/role/${id}`
+    })
+  }

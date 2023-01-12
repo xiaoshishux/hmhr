@@ -141,7 +141,12 @@
 </template>
 
 <script>
-import { getRolesAPI, getCompanyInfoAPI } from "@/api";
+import {
+  getRolesAPI,
+  getCompanyInfoAPI,
+  addRoleAPI,
+  getRoleIdAPI,
+} from "@/api";
 import { mapGetters } from "vuex";
 export default {
   data() {
@@ -207,21 +212,40 @@ export default {
     setRoles() {},
 
     // 编辑角色
-    editRoles() {},
+    async editRoles(dataObj) {
+      const res = await getRoleIdAPI(dataObj.id);
+      if (!res.success) return this.$message.error(res.message);
+      this.roleForm = res.data;
+      // 弹框展示
+      this.showDialog = true;
+    },
 
     // 删除角色
     delRoles() {},
     // 角色弹窗-> 确定按钮
     roleSubmit() {
-      this.showDialog = false;
+      this.$refs.roleForm.validate(async (valid) => {
+        if (valid) {
+          // 调用新增角色的 API
+          const res = await addRoleAPI(this.roleForm);
+          // 根据状态码判断请求成功与否
+          if (!res.success) return this.$message.error(res.message);
+          // 添加成功，就给用户进行提示
+          this.$message.success(res.message);
+          // 重新获取权限列表数据
+          this.getRolesList();
+          // 隐藏弹窗
+          this.showDialog = false;
+        }
+      });
     },
     // 角色弹窗->取消按钮
     cancleRoles() {
       this.showDialog = false;
     },
-    addRoleBtnFn(){
-      this.showDialog = true
-    }
+    addRoleBtnFn() {
+      this.showDialog = true;
+    },
   },
 };
 </script>
