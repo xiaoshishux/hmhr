@@ -111,6 +111,7 @@
         :close-on-click-modal="false"
         :close-on-press-escape="false"
         :visible.sync="showDialog"
+        @close="closeRoleDialog"
       >
         <el-form
           ref="roleForm"
@@ -302,6 +303,11 @@ export default {
       this.isEdit = false;
       // 弹窗出现
       this.showDialog = true;
+    },
+    // 关闭角色弹窗
+    closeRoleDialog() {
+      this.$refs.roleForm.resetFields();
+      this.showDialog = false;
     },
   },
 };
