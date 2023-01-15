@@ -205,10 +205,16 @@ export default {
       this.formData = res.data;
     },
     // 每页显示的条数发生改变时触发
-    handleSizeChange() {},
+    handleSizeChange(newSize) {
+      this.query.pagesize = newSize
+      this.getRolesList()
+    },
 
     // 当前页面发生改变时触发
-    handleCurrentChange() {},
+    handleCurrentChange(newPage) {
+      this.query.page = newPage
+      this.getRolesList()
+    },
 
     // 设置角色
     setRoles() {},
