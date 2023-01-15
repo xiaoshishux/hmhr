@@ -107,7 +107,7 @@
       </el-card>
       <!-- 新增弹框 -->
       <el-dialog
-        :title="isEdit ? '新增角色':'编辑角色'"
+        :title="isEdit ? '新增角色' : '编辑角色'"
         :close-on-click-modal="false"
         :close-on-press-escape="false"
         :visible.sync="showDialog"
@@ -146,9 +146,10 @@ import {
   getCompanyInfoAPI,
   addRoleAPI,
   getRoleIdAPI,
+  updateRoleAPI,
+  deleteRoleAPI,
 } from "@/api";
 import { mapGetters } from "vuex";
-import { updateRoleAPI } from "@/api";
 export default {
   data() {
     return {
@@ -206,14 +207,14 @@ export default {
     },
     // 每页显示的条数发生改变时触发
     handleSizeChange(newSize) {
-      this.query.pagesize = newSize
-      this.getRolesList()
+      this.query.pagesize = newSize;
+      this.getRolesList();
     },
 
     // 当前页面发生改变时触发
     handleCurrentChange(newPage) {
-      this.query.page = newPage
-      this.getRolesList()
+      this.query.page = newPage;
+      this.getRolesList();
     },
 
     // 设置角色
@@ -232,7 +233,29 @@ export default {
     },
 
     // 删除角色
-    delRoles() {},
+    async delRoles(dataObj) {
+      // 显示删除询问对话框
+      const delRes = await this.$confirm(
+        "此操作将永久删除该角色，是否继续?",
+        "提示",
+        {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        }
+      ).catch((err) => err);
+      // 用户点击了取消，给用户进行提示
+      if (delRes === "cancel") return this.$message.info("您取消了删除");
+
+      // 调用删除的API
+      const res = await deleteRoleAPI(dataObj.id);
+      // 根据返回的状态码进行错误提示
+      if (!res.success) return this.$message.error(res.message);
+      // 删除成功后的提示
+      this.$message.success(res.message);
+      // 重新获取数据
+      this.getRolesList();
+    },
     // 角色弹窗-> 确定按钮
     roleSubmit() {
       this.$refs.roleForm.validate(async (valid) => {
