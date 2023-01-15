@@ -253,6 +253,15 @@ export default {
       if (!res.success) return this.$message.error(res.message);
       // 删除成功后的提示
       this.$message.success(res.message);
+
+      // 判断当前数据的长度是否等于 1
+      if (this.rolesList.length === 1) {
+        this.query.page--;
+        // 如果是第一页的第一条
+        if (this.query.page === 0) {
+          this.query.page = 1;
+        }
+      }
       // 重新获取数据
       this.getRolesList();
     },
