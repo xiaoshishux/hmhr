@@ -32,3 +32,12 @@ export function getRoleIdAPI(id) {
       url: `/sys/role/${id}`
     })
   }
+
+// 编辑角色
+export function updateRoleAPI(data) {
+  return request({
+    url: `/sys/role/${data.id}`,
+    method:'put',
+    data
+  })
+}

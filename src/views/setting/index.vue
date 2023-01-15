@@ -107,7 +107,7 @@
       </el-card>
       <!-- 新增弹框 -->
       <el-dialog
-        title="新增角色"
+        :title="isEdit ? '新增角色':'编辑角色'"
         :close-on-click-modal="false"
         :close-on-press-escape="false"
         :visible.sync="showDialog"
@@ -148,6 +148,7 @@ import {
   getRoleIdAPI,
 } from "@/api";
 import { mapGetters } from "vuex";
+import { updateRoleAPI } from "@/api";
 export default {
   data() {
     return {
@@ -160,6 +161,7 @@ export default {
       total: 0, // 角色数据总条数
       formData: {}, //公司信息对象
       showDialog: false, //控制弹框的隐藏和展示
+      isEdit: false, //是否处于编辑状态
       // 添加角色
       roleForm: {
         name: "",
@@ -213,6 +215,9 @@ export default {
 
     // 编辑角色
     async editRoles(dataObj) {
+      // 是否编辑状态
+      this.isEdit = true;
+      // 调用接口，获取需要编辑的角色数据
       const res = await getRoleIdAPI(dataObj.id);
       if (!res.success) return this.$message.error(res.message);
       this.roleForm = res.data;
@@ -226,15 +231,25 @@ export default {
     roleSubmit() {
       this.$refs.roleForm.validate(async (valid) => {
         if (valid) {
-          // 调用新增角色的 API
-          const res = await addRoleAPI(this.roleForm);
-          // 根据状态码判断请求成功与否
-          if (!res.success) return this.$message.error(res.message);
-          // 添加成功，就给用户进行提示
-          this.$message.success(res.message);
+          if (!this.isEdit) {
+            // 调用新增角色的 API
+            const res = await addRoleAPI(this.roleForm);
+            // 根据状态码判断请求成功与否
+            if (!res.success) return this.$message.error(res.message);
+            // 添加成功，给用户进行提示
+            this.$message.success(res.message);
+          } else {
+            // 调用编辑角色的 API
+            const res = await updateRoleAPI(this.roleForm);
+            // 根据状态码判断请求成功与否
+            if (!res.success) return this.$message.error(res.message);
+            // 编辑成功，给用户进行提示
+            this.$message.success(res.message);
+          }
+
           // 重新获取权限列表数据
           this.getRolesList();
-          // 隐藏弹窗
+          // 隐藏弹框
           this.showDialog = false;
         }
       });
@@ -243,7 +258,11 @@ export default {
     cancleRoles() {
       this.showDialog = false;
     },
+    // 新增角色-按钮点击事件
     addRoleBtnFn() {
+      // 现在不是编辑状态
+      this.isEdit = false;
+      // 弹窗出现
       this.showDialog = true;
     },
   },
