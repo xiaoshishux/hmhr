@@ -59,6 +59,7 @@
 <script>
 // 导入组件
 import PageTools from "@/components/PageTools";
+import {getEmployeeListAPI} from "@/api"
 
 export default {
   name:"Employees",
@@ -75,7 +76,16 @@ export default {
   components: {
     PageTools, // 导入自定义组件
   },
+  created(){
+    // 调用获取员工列表的方法
+    this.getEmployeesList()
+  },
   methods: {
+    // 获取员工列表
+   async getEmployeesList(){
+      const res = await getEmployeeListAPI(this.query)
+      console.log(res)
+    },
     // 每页显示的条数发生改变时触发
     handleSizeChange() {},
     // 当前页面发生改变时触发
