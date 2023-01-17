@@ -22,9 +22,15 @@
           <el-table-column label="头像" prop="staffPhoto" />
           <el-table-column label="手机号" prop="mobile" />
           <el-table-column label="工号" prop="workNumber" />
-          <el-table-column label="聘用形式" prop="formOfEmployment" />
+          <el-table-column label="聘用形式" prop="formOfEmployment" :formatter="formatter"/>
           <el-table-column label="部门" prop="departmentName" />
-          <el-table-column label="入职时间" prop="timeOfEntry" />
+          <el-table-column label="入职时间" prop="timeOfEntry" >
+          <template v-slot="{row}">
+            <span >
+              {{ parseTime(row.timeOfEntry,'{yyyy}-{mm}-{dd}') }}
+            </span>
+          </template>
+          </el-table-column>>
           <el-table-column label="操作" width="280">
             <template>
               <el-button type="text" size="small">查看</el-button>
@@ -60,7 +66,8 @@
 // 导入组件
 import PageTools from "@/components/PageTools";
 import { getEmployeeListAPI } from "@/api";
-
+import Employees from '@/api/constant/employees'
+import {parseTime} from '@/utils'
 export default {
   name: "Employees",
   data() {
@@ -91,6 +98,13 @@ export default {
       this.employeesList = res.data.rows;
       this.total = res.data.total;
     },
+    // 格式化表格的某一项
+    formatter(row,colum,cellValue,index){
+      // 用数组的 find 方法找到 id = 1 的元素，再取出它的 value
+      const obj = Employees.hireType.find((item) => item.id === cellValue)
+      return obj ? obj.value:'未知'
+    },
+    parseTime,
     // 每页显示的条数发生改变时触发
     handleSizeChange(newPage) {
       this.query.size = newPage;
