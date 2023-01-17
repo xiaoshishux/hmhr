@@ -16,15 +16,15 @@
         </template>
       </page-tools>
       <el-card style="margin-top: 10px">
-        <el-table border>
-          <el-table-column label="序号" />
-          <el-table-column label="姓名" />
-          <el-table-column label="头像" />
-          <el-table-column label="手机号" />
-          <el-table-column label="工号" />
-          <el-table-column label="聘用形式" />
-          <el-table-column label="部门" />
-          <el-table-column label="入职时间" />
+        <el-table border :data="employeesList">
+          <el-table-column label="序号" type="index" />
+          <el-table-column label="姓名" prop="username" />
+          <el-table-column label="头像" prop="staffPhoto" />
+          <el-table-column label="手机号" prop="mobile" />
+          <el-table-column label="工号" prop="workNumber" />
+          <el-table-column label="聘用形式" prop="formOfEmployment" />
+          <el-table-column label="部门" prop="departmentName" />
+          <el-table-column label="入职时间" prop="timeOfEntry" />
           <el-table-column label="操作" width="280">
             <template>
               <el-button type="text" size="small">查看</el-button>
@@ -59,10 +59,10 @@
 <script>
 // 导入组件
 import PageTools from "@/components/PageTools";
-import {getEmployeeListAPI} from "@/api"
+import { getEmployeeListAPI } from "@/api";
 
 export default {
-  name:"Employees",
+  name: "Employees",
   data() {
     return {
       query: {
@@ -76,20 +76,31 @@ export default {
   components: {
     PageTools, // 导入自定义组件
   },
-  created(){
+  created() {
     // 调用获取员工列表的方法
-    this.getEmployeesList()
+    this.getEmployeesList();
   },
   methods: {
     // 获取员工列表
-   async getEmployeesList(){
-      const res = await getEmployeeListAPI(this.query)
-      console.log(res)
+    async getEmployeesList() {
+      const res = await getEmployeeListAPI(this.query);
+      console.log(res);
+      // gengen根据返回的状态码给用户提示
+      if (!res.success) return this.$message.error(res.message);
+      // 将返回的结果赋值 data 中的数据
+      this.employeesList = res.data.rows;
+      this.total = res.data.total;
     },
     // 每页显示的条数发生改变时触发
-    handleSizeChange() {},
+    handleSizeChange(newPage) {
+      this.query.size = newPage;
+      this.getEmployeesList();
+    },
     // 当前页面发生改变时触发
-    handleCurrentChange() {},
+    handleCurrentChange(newPage) {
+      this.query.page = newPage;
+      this.getEmployeesList();
+    },
   },
 };
 </script>
