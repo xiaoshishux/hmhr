@@ -16,21 +16,34 @@
         </template>
       </page-tools>
       <el-card style="margin-top: 10px">
-        <el-table border :data="employeesList">
+        <el-table
+          border
+          :data="employeesList"
+          :default-sort="{ prop: 'workNumber' }"
+        >
           <el-table-column label="序号" type="index" />
           <el-table-column label="姓名" prop="username" />
           <el-table-column label="头像" prop="staffPhoto" />
           <el-table-column label="手机号" prop="mobile" />
-          <el-table-column label="工号" prop="workNumber" />
-          <el-table-column label="聘用形式" prop="formOfEmployment" :formatter="formatter"/>
+          <el-table-column
+            label="工号"
+            prop="workNumber"
+            sortable
+            :sort-method="workNumberSortFn"
+          />
+          <el-table-column
+            label="聘用形式"
+            prop="formOfEmployment"
+            :formatter="formatter"
+          />
           <el-table-column label="部门" prop="departmentName" />
-          <el-table-column label="入职时间" prop="timeOfEntry" >
-          <template v-slot="{row}">
-            <span >
-              {{ parseTime(row.timeOfEntry,'{yyyy}-{mm}-{dd}') }}
-            </span>
-          </template>
-          </el-table-column>>
+          <el-table-column label="入职时间" prop="timeOfEntry">
+            <template v-slot="{ row }">
+              <span>
+                {{ parseTime(row.timeOfEntry, "{yyyy}-{mm}-{dd}") }}
+              </span>
+            </template> </el-table-column
+          >>
           <el-table-column label="操作" width="280">
             <template>
               <el-button type="text" size="small">查看</el-button>
@@ -66,8 +79,8 @@
 // 导入组件
 import PageTools from "@/components/PageTools";
 import { getEmployeeListAPI } from "@/api";
-import Employees from '@/api/constant/employees'
-import {parseTime} from '@/utils'
+import Employees from "@/api/constant/employees";
+import { parseTime } from "@/utils";
 export default {
   name: "Employees",
   data() {
@@ -99,12 +112,22 @@ export default {
       this.total = res.data.total;
     },
     // 格式化表格的某一项
-    formatter(row,colum,cellValue,index){
+    formatter(row, colum, cellValue, index) {
       // 用数组的 find 方法找到 id = 1 的元素，再取出它的 value
-      const obj = Employees.hireType.find((item) => item.id === cellValue)
-      return obj ? obj.value:'未知'
+      const obj = Employees.hireType.find((item) => item.id === cellValue);
+      return obj ? obj.value : "未知";
     },
+    // 格式化入职时间
     parseTime,
+    // 员工列-自定义排序
+    workNumberSortFn(a, b) {
+      // 打印a和b发现是表格数组里的对象
+      // sort方法使用:
+      // 如果return小于0, 那么 a 会被排列到 b 之前
+      // 如果return等于0, 那么 a 和 b 位置不变
+      // 如果return大于0, 那么 a 会被排列到 b 之后
+      return parseInt(a.workNumber) - parseInt(b.workNumber);
+    },
     // 每页显示的条数发生改变时触发
     handleSizeChange(newPage) {
       this.query.size = newPage;
