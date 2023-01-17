@@ -5,23 +5,27 @@
       <div class="left">
         <div class="tips">
           <i class="el-icon-info" />
-          <solt name="slot-left"> <span>文字区域</span> </solt>
+          <slot name="slot-left">
+            <span>文字区域</span>
+          </slot>
         </div>
       </div>
 
       <div class="right">
         <!-- 右侧 -->
-        <solt name="slot-left"> <span>按钮区域</span> </solt>
+        <slot name="slot-right">
+          <span>按钮区域</span>
+        </slot>
       </div>
     </div>
   </el-card>
 </template>
-  
-  <script>
-export default {};
+
+<script>
+export default {}
 </script>
-  
-  <style lang="scss" scoped>
+
+<style lang="scss" scoped>
 .page-tools {
   display: flex;
   justify-content: space-between;
@@ -41,4 +45,3 @@ export default {};
   }
 }
 </style>
-  
