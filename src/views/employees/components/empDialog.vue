@@ -56,6 +56,7 @@
           :data="treeData"
           default-expand-all
           :props="{ label: 'name' }"
+          @node-click="treeClick"
         ></el-tree>
       </div>
     </el-form-item>
@@ -143,6 +144,17 @@ export default {
     // 部门输入框聚焦
     departmentNameFocus() {
       this.showTree = true;
+    },
+    // 树形控件-点击事件
+    treeClick(data) {
+      // 如果当前部门还有子部门，则不能被选中
+      if (data && data.children) {
+        return;
+      }
+      // 把当前选中的节点显示 input 框中
+      this.formData.departmentName = data.name;
+      // 隐藏 tree
+      this.showTree = false;
     },
   },
 };
