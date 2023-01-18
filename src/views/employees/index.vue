@@ -12,7 +12,9 @@
         <template #slot-right>
           <el-button type="danger" size="small">导入excel</el-button>
           <el-button type="success" size="small">导出excel</el-button>
-          <el-button type="primary" size="small">新增员工</el-button>
+          <el-button type="primary" size="small" @click="addEmpShowDialogFn"
+            >新增员工</el-button
+          >
         </template>
       </page-tools>
       <el-card style="margin-top: 10px">
@@ -71,6 +73,10 @@
           />
         </el-row>
       </el-card>
+      <!-- 新增员工弹窗组件 -->
+      <el-dialog title="新增员工" :visible.sync="showDialog">
+        <emp-dialog :s-dialog.sync="showDialog" />
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -78,6 +84,7 @@
 <script>
 // 导入组件
 import PageTools from "@/components/PageTools";
+import EmpDialog from "./components/empDialog.vue";
 import { getEmployeeListAPI } from "@/api";
 import Employees from "@/api/constant/employees";
 import { parseTime } from "@/utils";
@@ -91,10 +98,12 @@ export default {
       },
       employeesList: [], // 员工列表
       total: 0, // 数据总条数
+      showDialog: false, // 添加员工组件的展示
     };
   },
   components: {
     PageTools, // 导入自定义组件
+    EmpDialog,
   },
   created() {
     // 调用获取员工列表的方法
@@ -137,6 +146,10 @@ export default {
     handleCurrentChange(newPage) {
       this.query.page = newPage;
       this.getEmployeesList();
+    },
+    // 新增加员工-点击出弹窗
+    addEmpShowDialogFn() {
+      this.showDialog = true;
     },
   },
 };

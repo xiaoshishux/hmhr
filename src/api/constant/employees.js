@@ -1,14 +1,14 @@
 // 员工
-export default{
+export default {
     // 聘用形式
-    hireType:[
+    hireType: [
         {
-            id:1,
-            value:'正式'
+            id: 1,
+            value: '正式'
         },
         {
-            id:2,
-            vaule:'非正式'
+            id: 2,
+            vaule: '非正式'
         }
 
     ]
