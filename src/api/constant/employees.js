@@ -8,8 +8,7 @@ export default {
         },
         {
             id: 2,
-            vaule: '非正式'
+            value: '非正式'
         }
-
     ]
 }

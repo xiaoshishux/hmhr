@@ -28,7 +28,14 @@
         v-model="formData.formOfEmployment"
         placeholder="请选择"
         value=""
-      />
+      >
+        <el-option
+          v-for="item in hireType"
+          :key="item.id"
+          :label="item.value"
+          :value="item.id"
+        />
+      </el-select>
     </el-form-item>
     <el-form-item label="工号" prop="workNumber">
       <el-input
@@ -59,6 +66,7 @@
 </template>
   
 <script>
+import EmployeeEnum from "@/api/constant/employees";
 export default {
   name: "EmpDialog",
   data() {
@@ -100,6 +108,7 @@ export default {
           { required: true, message: "请选择入职时间", trigger: "blur" },
         ],
       },
+      hireType: EmployeeEnum.hireType, // 聘用形式数据绑定
     };
   },
   methods: {
