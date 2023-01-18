@@ -75,7 +75,11 @@
       </el-card>
       <!-- 新增员工弹窗组件 -->
       <el-dialog title="新增员工" :visible.sync="showDialog">
-        <emp-dialog :s-dialog.sync="showDialog" :tree-data="treeData" />
+        <emp-dialog
+          :s-dialog.sync="showDialog"
+          :tree-data="treeData"
+          @addEmpEV="addEmpFn"
+        />
       </el-dialog>
     </div>
   </div>
@@ -85,7 +89,7 @@
 // 导入组件
 import PageTools from "@/components/PageTools";
 import EmpDialog from "./components/empDialog.vue";
-import { getEmployeeListAPI, departmentsListAPI } from "@/api";
+import { getEmployeeListAPI, departmentsListAPI, addEmployeeAPI } from "@/api";
 import { transTree } from "@/utils";
 import Employees from "@/api/constant/employees";
 import { parseTime } from "@/utils";
@@ -161,6 +165,18 @@ export default {
       if (!res.success) return this.$message.error(res.message);
       this.treeData = transTree(res.data.depts, "");
       console.log(this.transTree);
+    },
+    // 新增员工-事件触发
+    async addEmpFn(formData) {
+      const res = await addEmployeeAPI(formData);
+
+      if (res.success) {
+        this.$message.success(res.message);
+        // 提示后, 重新请求列表
+        this.getEmployeeList();
+      } else {
+        this.$message.error(res.message);
+      }
     },
   },
 };

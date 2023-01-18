@@ -8,3 +8,11 @@ export function getEmployeeListAPI(param) {
         param
     })
 }
+// 添加员工
+export function addEmployeeAPI(data) {
+    return request({
+        url: '/sys/user',
+        methods: 'post',
+        data
+    })
+}

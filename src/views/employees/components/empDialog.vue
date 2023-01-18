@@ -145,6 +145,10 @@ export default {
     addSubmit() {
       this.$refs.addForm.validate((valid) => {
         if (valid) {
+          //通过表单检验
+          // 传值出去
+          this.$emit("addEmpEV", { ...this.formData });
+          // 关闭弹窗
           this.$emit("update:sDialog", false);
         }
       });
