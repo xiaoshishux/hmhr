@@ -74,7 +74,11 @@
         </el-row>
       </el-card>
       <!-- 新增员工弹窗组件 -->
-      <el-dialog title="新增员工" :visible.sync="showDialog">
+      <el-dialog
+        title="新增员工"
+        :visible.sync="showDialog"
+        @close="addEmpDialogCloseFn"
+      >
         <emp-dialog
           :s-dialog.sync="showDialog"
           :tree-data="treeData"
@@ -177,6 +181,10 @@ export default {
       } else {
         this.$message.error(res.message);
       }
+    },
+    // 新增员工->弹窗关闭事件
+    addEmpDialogCloseFn() {
+      this.$refs.addEmpDialog.$refs.addForm.resetFields();
     },
   },
 };
