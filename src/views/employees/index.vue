@@ -75,7 +75,7 @@
       </el-card>
       <!-- 新增员工弹窗组件 -->
       <el-dialog title="新增员工" :visible.sync="showDialog">
-        <emp-dialog :s-dialog.sync="showDialog" />
+        <emp-dialog :s-dialog.sync="showDialog" :tree-data="treeData" />
       </el-dialog>
     </div>
   </div>
@@ -85,7 +85,8 @@
 // 导入组件
 import PageTools from "@/components/PageTools";
 import EmpDialog from "./components/empDialog.vue";
-import { getEmployeeListAPI } from "@/api";
+import { getEmployeeListAPI, departmentsListAPI } from "@/api";
+import { transTree } from "@/utils";
 import Employees from "@/api/constant/employees";
 import { parseTime } from "@/utils";
 export default {
@@ -99,6 +100,7 @@ export default {
       employeesList: [], // 员工列表
       total: 0, // 数据总条数
       showDialog: false, // 添加员工组件的展示
+      treeData: [], // 存储部门列表(树结构)
     };
   },
   components: {
@@ -108,6 +110,8 @@ export default {
   created() {
     // 调用获取员工列表的方法
     this.getEmployeesList();
+    // 调用获取部门列表的方法
+    this.getDepartments();
   },
   methods: {
     // 获取员工列表
@@ -150,6 +154,13 @@ export default {
     // 新增加员工-点击出弹窗
     addEmpShowDialogFn() {
       this.showDialog = true;
+    },
+    // 获取树形组件的数据
+    async getDepartments() {
+      const res = await departmentsListAPI();
+      if (!res.success) return this.$message.error(res.message);
+      this.treeData = transTree(res.data.depts, "");
+      console.log(this.transTree);
     },
   },
 };

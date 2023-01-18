@@ -49,7 +49,15 @@
         style="width: 50%"
         v-model="formData.departmentName"
         placeholder="请选择部门"
+        @focus="departmentNameFocus"
       />
+      <div class="tree-box" v-if="showTree">
+        <el-tree
+          :data="treeData"
+          default-expand-all
+          :props="{ label: 'name' }"
+        ></el-tree>
+      </div>
     </el-form-item>
     <el-form-item label="转正时间" prop="correctionTime">
       <el-date-picker
@@ -69,6 +77,12 @@
 import EmployeeEnum from "@/api/constant/employees";
 export default {
   name: "EmpDialog",
+  props: {
+    treeData: {
+      type: Array,
+      default: (_) => [],
+    },
+  },
   data() {
     return {
       // 添加表单字段
@@ -109,6 +123,7 @@ export default {
         ],
       },
       hireType: EmployeeEnum.hireType, // 聘用形式数据绑定
+      showTree: false, //是否显示树形组件
     };
   },
   methods: {
@@ -124,6 +139,10 @@ export default {
           this.$emit("update:sDialog", false);
         }
       });
+    },
+    // 部门输入框聚焦
+    departmentNameFocus() {
+      this.showTree = true;
     },
   },
 };
