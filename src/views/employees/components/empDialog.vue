@@ -125,7 +125,15 @@ export default {
       },
       hireType: EmployeeEnum.hireType, // 聘用形式数据绑定
       showTree: false, //是否显示树形组件
+      clickDepartName: "", //点击的部门名字
     };
+  },
+  watch: {
+    "formData.departmentName"(newVal) {
+      if (newVal !== this.clickDepartName) {
+        this.formData.departmentName = this.clickDepartName;
+      }
+    },
   },
   methods: {
     // 点击取消按钮
@@ -155,6 +163,8 @@ export default {
       this.formData.departmentName = data.name;
       // 隐藏 tree
       this.showTree = false;
+      //   临时保存点击的部门名字
+      this.clickDepartName = data.name;
     },
   },
 };
