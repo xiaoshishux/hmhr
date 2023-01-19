@@ -48,7 +48,16 @@ export const constantRoutes = [
     }]
   },
 
-  { path: '*', redirect: '/404', hidden: true }
+  { path: '*', redirect: '/404', hidden: true },
+  {
+    path: '/excel',
+    component: Layout,
+    hidden: true,//不显示到左侧菜单
+    children: [{
+      path: '',
+      component: () => import('@/views/excel')
+    }]
+  }
 ]
 
 const createRouter = () => new Router({

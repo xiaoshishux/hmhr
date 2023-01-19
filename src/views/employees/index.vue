@@ -10,7 +10,9 @@
 
         <!-- 自定义右侧内容 -->
         <template #slot-right>
-          <el-button type="danger" size="small">导入excel</el-button>
+          <el-button type="danger" size="small" @click="uploadExcelBtnFn"
+            >导入excel</el-button
+          >
           <el-button type="success" size="small">导出excel</el-button>
           <el-button type="primary" size="small" @click="addEmpShowDialogFn"
             >新增员工</el-button
@@ -185,6 +187,10 @@ export default {
     // 新增员工->弹窗关闭事件
     addEmpDialogCloseFn() {
       this.$refs.addEmpDialog.$refs.addForm.resetFields();
+    },
+    // 导入excel按钮->点击事件
+    uploadExcelBtnFn() {
+      this.$router.push("./excel");
     },
   },
 };
