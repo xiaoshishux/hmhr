@@ -1,27 +1,13 @@
 <template>
-  <div class="app-container">
-    <upload-excel-component
-      :on-success="handleSuccess"
-      :before-upload="beforeUpload"
-    />
-    <!-- 其他代码略 -->
-  </div>
+  <!-- Excel 导入功能组件 -->
+  <upload-excel :on-success="handleSuccess" />
 </template>
-  
-  <script>
-// 导入上传的组件
-import UploadExcelComponent from "@/components/UploadExcel/index.vue";
-import { formatExcelDate } from "@/utils";
+
+<script>
+import { formatExcelDate, parseTime } from "@/utils";
+import { importEmployeeAPI } from "@/api";
 export default {
-  name: "UploadExcel",
-  // 绑定上传组件
-  components: { UploadExcelComponent },
-  data() {
-    return {
-      tableData: [],
-      tableHeader: [],
-    };
-  },
+  name: "Excel",
   methods: {
     // 将表格中的数据进行格式化
     transExcel(results) {
@@ -34,10 +20,12 @@ export default {
         部门: "departmentName",
         聘用形式: "formOfEmployment",
       };
+
       return results.map((item) => {
-        // 1.取出这个对象所有的属性名：[’姓名‘，’手机号‘]
-        // 2.遍历这个数组，通过中文名去除 userRelations 找对应英文名，保存值
         const obj = {};
+
+        // 1. 取出这个对象所有的属性名： ['姓名'， ‘手机号’]
+        // 2. 遍历这个数组，通过 中文名去 userRelations 找对应英文名， 保存值
         const contentKeys = Object.keys(item);
         contentKeys.forEach((key) => {
           // 找到对应的英文名
@@ -45,40 +33,29 @@ export default {
           // 如果格式化的是时间，需要进行转换
           if (transKey === "timeOfEntry" || transKey === "correctionTime") {
             // 表格的天数->转成日期对象
-            const transData = new Date(formatExcelDate(item[key]));
-            // 再把日期对象转成->年-月-日 保存到对象属性里给后台
-            obj[transKey] = parseTime(transData, "{yyyy-}-{mm}-{dd}");
+            const transDate = new Date(formatExcelDate(item[key]));
+            // 再把日期对象转成->'年-月-日'保存到对象属性里给后台
+            obj[transKey] = parseTime(transDate, "{yyyy}-{mm}-{dd}");
           } else {
             obj[transKey] = item[key];
           }
         });
+
         return obj;
       });
     },
 
-    // 上传之前的函数
-    beforeUpload(file) {
-      // 如判断文件的大小是否大于 1 兆
-      const isLt1M = file.size / 1024 / 1024 < 1;
-
-      // 若大于 1 兆则停止解析并提示错误信息。
-      if (isLt1M) {
-        return true;
-      }
-
-      this.$message({
-        message: "Please do not upload files larger than 1m in size.",
-        type: "warning",
-      });
-      return false;
-    },
-    // 成功调用之后的函数，它会返回表格的表头和内容。
-    handleSuccess({ results, header }) {
+    // 导入成功以后的回调函数
+    async handleSuccess({ results, header }) {
+      console.log(results);
       const arr = this.transExcel(results);
-      console.log("转换之后的格式是", arr);
-      // this.tableData = results;
-      // this.tableHeader = header;
+      const res = await importEmployeeAPI(arr).catch((err) => err);
+      if (!res.success) return this.$message.error(res.message);
+      this.$router.back();
+      this.$message.success("操作成功");
     },
   },
 };
 </script>
+
+<style lang="scss" scoped></style>
